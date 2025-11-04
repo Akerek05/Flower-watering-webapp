@@ -1,28 +1,13 @@
 import { useState } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  MenuItem,
-  Paper,
-} from "@mui/material";
+import { Box, TextField, Button, Paper, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SaveIcon from "@mui/icons-material/Save";
 
-/**
- * Növény hozzáadása űrlap
- * - kép feltöltés
- * - név, típus, locsolási gyakoriság
- * - mentés LocalStorage-be
- */
-export default function PlantForm({ onBack }) {
+export default function PlantForm({ user, setPlants, onBack }) {
   const [plant, setPlant] = useState({
     name: "",
     type: "",
     frequency: "",
     image: "",
-    nextWatering: "",
   });
 
   const handleChange = (e) => {
@@ -32,11 +17,8 @@ export default function PlantForm({ onBack }) {
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      setPlant((p) => ({ ...p, image: ev.target.result }));
-    };
+    reader.onload = (ev) => setPlant((p) => ({ ...p, image: ev.target.result }));
     reader.readAsDataURL(file);
   };
 
@@ -51,112 +33,43 @@ export default function PlantForm({ onBack }) {
     const now = new Date();
     const nextDate = new Date(now);
     const freq = parseInt(plant.frequency);
-
-    // pl. ha 3 naponta -> most + 3 nap
     nextDate.setDate(now.getDate() + (isNaN(freq) ? 3 : freq));
 
     const newPlant = {
-      ...plant,
-      nextWatering: nextDate.toISOString(),
+        ...plant,
+        owner: user, // <-- hozzárendeljük a tulajdonost
+        nextWatering: nextDate.toISOString(),
     };
-
-    const saved = JSON.parse(localStorage.getItem("plants") || "[]");
-    saved.push(newPlant);
-    localStorage.setItem("plants", JSON.stringify(saved));
-
-    alert("🌿 Növény sikeresen hozzáadva!");
-    onBack(); // vissza a főképernyőre
+    setPlants((prev) => [...prev, newPlant]); // <-- frissíti a listát App-ban
+    onBack();
   };
 
   return (
-    <Box
-      component={Paper}
-      sx={{
-        p: 4,
-        borderRadius: "16px",
-        maxWidth: 400,
-        mx: "auto",
-        mt: 4,
-      }}
-    >
-      <Typography variant="h6" gutterBottom>
-        🌼 Új növény hozzáadása
-      </Typography>
+    <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <Paper sx={{ p: 4, width: "100%", maxWidth: 400 }}>
+        <Typography variant="h6" gutterBottom>
+          🌱 Új növény hozzáadása
+        </Typography>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-      >
-        <TextField
-          label="Növény neve"
-          name="name"
-          value={plant.name}
-          onChange={handleChange}
-          fullWidth
-        />
-
-        <TextField
-          label="Típus (pl. szobanövény, kültéri)"
-          name="type"
-          value={plant.type}
-          onChange={handleChange}
-          fullWidth
-        />
-
-        <TextField
-          select
-          label="Locsolási gyakoriság (naponta)"
-          name="frequency"
-          value={plant.frequency}
-          onChange={handleChange}
-          fullWidth
-        >
-          <MenuItem value="1">Naponta</MenuItem>
-          <MenuItem value="3">3 naponta</MenuItem>
-          <MenuItem value="7">Hetente</MenuItem>
-          <MenuItem value="14">Kéthetente</MenuItem>
-        </TextField>
-
-        <Button variant="outlined" component="label">
-          Kép feltöltése
-          <input type="file" accept="image/*" hidden onChange={handleImage} />
-        </Button>
-
-        {plant.image && (
-          <Box
-            component="img"
-            src={plant.image}
-            alt="Előnézet"
-            sx={{
-              width: "100%",
-              maxHeight: 200,
-              objectFit: "cover",
-              borderRadius: "8px",
-            }}
-          />
-        )}
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            startIcon={<ArrowBackIcon />}
-            onClick={onBack}
-          >
-            Vissza
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField name="name" label="Név" value={plant.name} onChange={handleChange} />
+          <TextField name="type" label="Típus" value={plant.type} onChange={handleChange} />
+          <TextField name="frequency" label="Locsolási gyakoriság (nap)" value={plant.frequency} onChange={handleChange} />
+          <Button variant="outlined" component="label">
+            Kép feltöltése
+            <input type="file" hidden accept="image/*" onChange={handleImage} />
           </Button>
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="success"
-            startIcon={<SaveIcon />}
-          >
-            Mentés
-          </Button>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={onBack}>
+              Vissza
+            </Button>
+            <Button variant="contained" color="success" type="submit">
+              Mentés
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 }
