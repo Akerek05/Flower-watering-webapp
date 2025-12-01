@@ -5,6 +5,8 @@ import {
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import './MainScreen.css';
+
 export default function MainScreen({ user, plants, setPlants, onAddPlant, onShowStats }) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("");
@@ -100,11 +102,9 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
                   </Typography>
 
                   {plant.image && (
-                    <img
-                      src={plant.image}
-                      alt={plant.name}
-                      style={{ width: "100%", borderRadius: 8, marginTop: 8 }}
-                    />
+                    <div className="plant-image-wrapper">
+                      <img src={plant.image} alt={plant.name} />
+                    </div>
                   )}
 
                   <Box sx={{ mt: 2, display: "flex", gap: 1 }}>

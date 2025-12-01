@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, TextField, Button, Paper, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import './PlantForm.css';
 
 export default function PlantForm({ user, setPlants, onBack }) {
   const [plant, setPlant] = useState({
@@ -59,6 +60,16 @@ export default function PlantForm({ user, setPlants, onBack }) {
             Kép feltöltése
             <input type="file" hidden accept="image/*" onChange={handleImage} />
           </Button>
+
+          {/* Előnézet: ugyanaz a fixált magasság és objekt-fit, mint a fő nézetben */}
+          {plant.image && (
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="subtitle2">Előnézet</Typography>
+              <div className="preview-wrapper">
+                <img src={plant.image} alt="preview" />
+              </div>
+            </Box>
+          )}
 
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
             <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={onBack}>
