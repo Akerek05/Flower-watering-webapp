@@ -1,7 +1,18 @@
 import { Box, Typography, Button } from "@mui/material";
 import WateringCalendar from "./WateringCalendar";
+import type { Plant } from "../App";
 
-export default function WateringCalendarScreen({ user, plants, onBack }) {
+type WateringCalendarScreenProps = {
+  user: string;
+  plants: Plant[];
+  onBack: () => void;
+};
+
+export default function WateringCalendarScreen({
+  user,
+  plants,
+  onBack,
+}: WateringCalendarScreenProps) {
   return (
     <Box sx={{ mt: 4 }}>
       <Typography variant="h5" gutterBottom>

@@ -1,26 +1,48 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import {
-  Box, Typography, Button, Grid, TextField, MenuItem
+  Box,
+  Typography,
+  Button,
+  Grid,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import "./MainScreen.css";
 import PlantCard from "./PlantCard";
 import PlantDetailsDialog from "./PlantDetailsDialog";
 import TodayPlants from "./TodayPlants";
+import type { Plant } from "../App";
 
-export default function MainScreen({ user, plants, setPlants, onAddPlant, onShowStats }) {
+type MainScreenProps = {
+  user: string;
+  plants: Plant[];
+  setPlants: React.Dispatch<React.SetStateAction<Plant[]>>;
+  onAddPlant: () => void;
+  onShowStats: () => void;
+  onShowCalendar: () => void;
+};
+
+export default function MainScreen({
+  user,
+  plants,
+  setPlants,
+  onAddPlant,
+  onShowStats,
+  onShowCalendar,
+}: MainScreenProps) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [editPlant, setEditPlant] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [editPlant, setEditPlant] = useState<Plant | null>(null);
 
-  const handleDelete = (index) => {
+  const handleDelete = (index: number) => {
     if (!window.confirm("Biztosan törlöd ezt a növényt?")) return;
     const updated = plants.filter((_, i) => i !== index);
     setPlants(updated);
   };
 
-  const handleWater = (index) => {
+  const handleWater = (index: number) => {
     setPlants((prev) => {
       const updated = [...prev];
       const plant = updated[index];
@@ -28,30 +50,38 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
       nextDate.setDate(nextDate.getDate() + Number(plant.frequency));
       plant.nextWatering = nextDate.toISOString();
 
-      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      const users = JSON.parse(localStorage.getItem("users") || "{}") as Record<
+        string,
+        { plants?: Plant[] }
+      >;
       users[user].plants = updated;
       localStorage.setItem("users", JSON.stringify(users));
       return updated;
     });
   };
 
-  const handleDetails = (index) => {
+  const handleDetails = (index: number) => {
     setSelectedIndex(index);
     setEditPlant({ ...plants[index] });
   };
 
-  const handleDetailsChange = (e) => {
+  const handleDetailsChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setEditPlant((prev) => ({ ...prev, [name]: value }));
+    setEditPlant((prev) => (prev ? { ...prev, [name]: value } : prev));
   };
 
   const handleDetailsSave = () => {
-    if (selectedIndex == null) return;
+    if (selectedIndex == null || !editPlant) return;
     setPlants((prev) => {
       const updated = [...prev];
       updated[selectedIndex] = { ...editPlant };
 
-      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      const users = JSON.parse(localStorage.getItem("users") || "{}") as Record<
+        string,
+        { plants?: Plant[] }
+      >;
       users[user].plants = updated;
       localStorage.setItem("users", JSON.stringify(users));
       return updated;
@@ -67,13 +97,16 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
 
   const filteredPlants = plants
     .filter((p) => p.owner === user)
-    .filter((p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.type.toLowerCase().includes(search.toLowerCase())
+    .filter(
+      (p) =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.type.toLowerCase().includes(search.toLowerCase())
     )
     .filter((p) => (filterType ? p.type === filterType : true));
 
-  const allTypes = [...new Set(plants.filter(p => p.owner === user).map(p => p.type))];
+  const allTypes = [
+    ...new Set(plants.filter((p) => p.owner === user).map((p) => p.type)),
+  ];
 
   return (
     <Box sx={{ mt: 4 }}>
@@ -142,9 +175,14 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
         >
           Új növény
         </Button>
-        <Button variant="outlined" onClick={onShowStats}>
-          📊 Statisztika
-        </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button variant="outlined" onClick={onShowStats}>
+            📊 Statisztika
+          </Button>
+          <Button variant="outlined" onClick={onShowCalendar}>
+            📅 Naptár
+          </Button>
+        </Box>
       </Box>
 
       {/* részletek + szerkesztés dialógus */}

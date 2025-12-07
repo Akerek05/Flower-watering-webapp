@@ -1,15 +1,33 @@
-// src/components/StatsScreen.jsx
 import { Box, Typography, Button } from "@mui/material";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import type { Plant } from "../App";
 
-export default function StatsScreen({ user, plants, onBack }) {
-  // Összeszámolja, hogy hány növény milyen gyakoriságú locsolást igényel
-  const dataMap = {};
+type StatsScreenProps = {
+  user: string;
+  plants: Plant[];
+  onBack: () => void;
+};
+
+type StatItem = {
+  name: string;
+  count: number;
+};
+
+export default function StatsScreen({ user, plants, onBack }: StatsScreenProps) {
+  const dataMap: Record<string, number> = {};
 
   plants
     .filter((p) => p.owner === user)
     .forEach((p) => {
-      const freq = parseInt(p.frequency);
+      const freq = parseInt(p.frequency, 10);
       let label = "Egyéb";
 
       if (freq <= 2) label = "Napi";
@@ -19,7 +37,7 @@ export default function StatsScreen({ user, plants, onBack }) {
       dataMap[label] = (dataMap[label] || 0) + 1;
     });
 
-  const data = Object.keys(dataMap).map((key) => ({
+  const data: StatItem[] = Object.keys(dataMap).map((key) => ({
     name: key,
     count: dataMap[key],
   }));

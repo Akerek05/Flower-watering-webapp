@@ -1,6 +1,12 @@
 import { Box, Typography, List, ListItem, ListItemText } from "@mui/material";
+import type { Plant } from "../App";
 
-export default function TodayPlants({ user, plants }) {
+type TodayPlantsProps = {
+  user: string;
+  plants: Plant[];
+};
+
+export default function TodayPlants({ user, plants }: TodayPlantsProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -9,7 +15,7 @@ export default function TodayPlants({ user, plants }) {
     .filter((p) => {
       const d = new Date(p.nextWatering);
       d.setHours(0, 0, 0, 0);
-      return d <= today;              // ma vagy régebbi
+      return d <= today; // ma vagy régebbi
     });
 
   if (duePlants.length === 0) {

@@ -1,10 +1,18 @@
 import { Box, Typography, Card, List, ListItem, ListItemText } from "@mui/material";
 import "./WateringCalendar.css";
+import type { Plant } from "../App";
 
-export default function WateringCalendar({ user, plants }) {
+type WateringCalendarProps = {
+  user: string;
+  plants: Plant[];
+};
+
+type PlantsByDate = Record<string, Plant[]>;
+
+export default function WateringCalendar({ user, plants }: WateringCalendarProps) {
   const userPlants = plants.filter((p) => p.owner === user);
 
-  const map = {};
+  const map: PlantsByDate = {};
   userPlants.forEach((p) => {
     const date = new Date(p.nextWatering).toLocaleDateString("hu-HU");
     if (!map[date]) map[date] = [];
@@ -12,7 +20,7 @@ export default function WateringCalendar({ user, plants }) {
   });
 
   const entries = Object.entries(map).sort(
-    ([d1], [d2]) => new Date(d1) - new Date(d2)
+    ([d1], [d2]) => new Date(d1).getTime() - new Date(d2).getTime()
   );
 
   if (entries.length === 0) {

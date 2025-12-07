@@ -1,23 +1,43 @@
-import { useState } from "react";
-import { Box, Button, Paper, TextField, Typography, Tabs, Tab } from "@mui/material";
+import { useState, FormEvent } from "react";
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography,
+  Tabs,
+  Tab,
+} from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+
+type LoginProps = {
+  onLogin: (username: string) => void;
+};
+
+type StoredUser = {
+  password: string;
+  plants: unknown[];
+};
+
+type UsersMap = Record<string, StoredUser>;
 
 /**
  * Bejelentkezés / regisztrációs képernyő
  * Adatok LocalStorage-ben: users = { username: { password, plants: [] } }
  */
-export default function Login({ onLogin }) {
-  const [tab, setTab] = useState("login");
+export default function Login({ onLogin }: LoginProps) {
+  const [tab, setTab] = useState<"login" | "register">("login");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleChange = (_, newValue) => setTab(newValue);
+  const handleChange = (_: React.SyntheticEvent, newValue: "login" | "register") =>
+    setTab(newValue);
 
-  const handleLogin = (e) => {
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const users = JSON.parse(localStorage.getItem("users") || "{}");
+    const users = JSON.parse(localStorage.getItem("users") || "{}") as UsersMap;
     const user = users[name];
 
     if (!user) {
@@ -34,10 +54,10 @@ export default function Login({ onLogin }) {
     onLogin(name);
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const users = JSON.parse(localStorage.getItem("users") || "{}");
+    const users = JSON.parse(localStorage.getItem("users") || "{}") as UsersMap;
 
     if (users[name]) {
       alert("Ez a felhasználónév már létezik!");

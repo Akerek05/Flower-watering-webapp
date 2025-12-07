@@ -1,7 +1,23 @@
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, TextField, Box, Typography
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Box,
+  Typography,
 } from "@mui/material";
+import type { ChangeEvent } from "react";
+import type { Plant } from "../App";
+
+type PlantDetailsDialogProps = {
+  open: boolean;
+  plant: Plant | null;
+  onClose: () => void;
+  onSave: () => void;
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+};
 
 export default function PlantDetailsDialog({
   open,
@@ -9,7 +25,7 @@ export default function PlantDetailsDialog({
   onClose,
   onSave,
   onChange,
-}) {
+}: PlantDetailsDialogProps) {
   if (!plant) return null;
 
   return (

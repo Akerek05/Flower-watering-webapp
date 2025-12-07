@@ -1,30 +1,49 @@
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import "./PlantForm.css";
 import PlantFormFields from "./PlantFormFields";
+import type { Plant } from "../App";
 
-export default function PlantForm({ user, setPlants, onBack }) {
-  const [plant, setPlant] = useState({
+type PlantFormProps = {
+  user: string;
+  setPlants: React.Dispatch<React.SetStateAction<Plant[]>>;
+  onBack: () => void;
+};
+
+// csak a formhoz kell: owner + nextWatering nélkül, image opcionális
+export type FormPlant = {
+  name: string;
+  type: string;
+  frequency: string;
+  image?: string;
+  note: string;
+};
+
+export default function PlantForm({ user, setPlants, onBack }: PlantFormProps) {
+  const [plant, setPlant] = useState<FormPlant>({
     name: "",
     type: "",
     frequency: "",
-    image: "",
-    note: "",        // 👈 új mező
+    image: undefined,
+    note: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setPlant({ ...plant, [e.target.name]: e.target.value });
   };
 
-  const handleImage = (e) => {
-    const file = e.target.files[0];
+  const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setPlant((p) => ({ ...p, image: ev.target.result }));
+    reader.onload = (ev) =>
+      setPlant((p) => ({ ...p, image: ev.target?.result as string }));
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!plant.name || !plant.type || !plant.frequency) {
@@ -34,10 +53,10 @@ export default function PlantForm({ user, setPlants, onBack }) {
 
     const now = new Date();
     const nextDate = new Date(now);
-    const freq = parseInt(plant.frequency);
+    const freq = parseInt(plant.frequency, 10);
     nextDate.setDate(now.getDate() + (isNaN(freq) ? 3 : freq));
 
-    const newPlant = {
+    const newPlant: Plant = {
       ...plant,
       owner: user,
       nextWatering: nextDate.toISOString(),
