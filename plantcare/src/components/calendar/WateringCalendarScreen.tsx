@@ -1,6 +1,6 @@
 import { Box, Typography, Button } from "@mui/material";
 import WateringCalendar from "./WateringCalendar";
-import type { Plant } from "../App";
+import type { Plant } from "../../types/plant";
 
 type WateringCalendarScreenProps = {
   user: string;

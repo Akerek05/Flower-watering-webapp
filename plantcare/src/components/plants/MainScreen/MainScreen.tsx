@@ -1,18 +1,12 @@
 import { useState, ChangeEvent } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Grid,
-  TextField,
-  MenuItem,
-} from "@mui/material";
+import { Box, Typography, Button, Grid } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import "./MainScreen.css";
 import PlantCard from "./PlantCard";
 import PlantDetailsDialog from "./PlantDetailsDialog";
 import TodayPlants from "./TodayPlants";
-import type { Plant } from "../App";
+import FilterBar from "./FilterBar";
+import type { Plant } from "../../../types/plant";
 
 type MainScreenProps = {
   user: string;
@@ -49,6 +43,7 @@ export default function MainScreen({
       const nextDate = new Date();
       nextDate.setDate(nextDate.getDate() + Number(plant.frequency));
       plant.nextWatering = nextDate.toISOString();
+      plant.waterCount = (plant.waterCount ?? 0) + 1;
 
       const users = JSON.parse(localStorage.getItem("users") || "{}") as Record<
         string,
@@ -114,32 +109,14 @@ export default function MainScreen({
         🌿 {user} növényei
       </Typography>
 
-      {/* kereső + szűrő */}
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <TextField
-          label="Keresés név vagy típus szerint"
-          variant="outlined"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          fullWidth
-        />
-        <TextField
-          select
-          label="Szűrés kategória szerint"
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          sx={{ minWidth: 200 }}
-        >
-          <MenuItem value="">Összes</MenuItem>
-          {allTypes.map((t, i) => (
-            <MenuItem key={i} value={t}>
-              {t}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
+      <FilterBar
+        search={search}
+        onSearchChange={setSearch}
+        filterType={filterType}
+        onFilterTypeChange={setFilterType}
+        types={allTypes}
+      />
 
-      {/* növénykártyák */}
       {filteredPlants.length === 0 ? (
         <Typography color="text.secondary" sx={{ mt: 2 }}>
           Nincs találat.
@@ -159,13 +136,11 @@ export default function MainScreen({
         </Grid>
       )}
 
-      {/* ma esedékes */}
       <Typography variant="h6" sx={{ mt: 4 }}>
         ✅ Ma esedékes locsolások
       </Typography>
       <TodayPlants user={user} plants={plants} />
 
-      {/* gombok alul */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
         <Button
           variant="contained"
@@ -185,7 +160,6 @@ export default function MainScreen({
         </Box>
       </Box>
 
-      {/* részletek + szerkesztés dialógus */}
       <PlantDetailsDialog
         open={Boolean(editPlant)}
         plant={editPlant}

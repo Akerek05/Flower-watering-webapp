@@ -9,7 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import type { ChangeEvent } from "react";
-import type { Plant } from "../App";
+import type { Plant } from "../../../types/plant";
+
 
 type PlantDetailsDialogProps = {
   open: boolean;

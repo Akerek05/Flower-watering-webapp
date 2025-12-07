@@ -8,7 +8,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { Plant } from "../App";
+import type { Plant } from "../../../types/plant";
+
 
 type StatsScreenProps = {
   user: string;
@@ -18,34 +19,21 @@ type StatsScreenProps = {
 
 type StatItem = {
   name: string;
-  count: number;
+  waterCount: number;
 };
 
 export default function StatsScreen({ user, plants, onBack }: StatsScreenProps) {
-  const dataMap: Record<string, number> = {};
-
-  plants
+  const data: StatItem[] = plants
     .filter((p) => p.owner === user)
-    .forEach((p) => {
-      const freq = parseInt(p.frequency, 10);
-      let label = "Egyéb";
-
-      if (freq <= 2) label = "Napi";
-      else if (freq <= 7) label = "Heti";
-      else label = "Havi";
-
-      dataMap[label] = (dataMap[label] || 0) + 1;
-    });
-
-  const data: StatItem[] = Object.keys(dataMap).map((key) => ({
-    name: key,
-    count: dataMap[key],
-  }));
+    .map((p) => ({
+      name: p.name,
+      waterCount: p.waterCount ?? 0,
+    }));
 
   return (
     <Box sx={{ mt: 4 }}>
       <Typography variant="h5" gutterBottom>
-        📊 Locsolási statisztikák
+        📊 Locsolások növényenként
       </Typography>
 
       {data.length === 0 ? (
@@ -59,7 +47,7 @@ export default function StatsScreen({ user, plants, onBack }: StatsScreenProps) 
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="count" fill="#81c784" />
+            <Bar dataKey="waterCount" fill="#81c784" />
           </BarChart>
         </ResponsiveContainer>
       )}

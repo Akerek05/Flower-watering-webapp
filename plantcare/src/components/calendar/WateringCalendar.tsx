@@ -1,6 +1,6 @@
 import { Box, Typography, Card, List, ListItem, ListItemText } from "@mui/material";
 import "./WateringCalendar.css";
-import type { Plant } from "../App";
+import type { Plant } from "../../types/plant";
 
 type WateringCalendarProps = {
   user: string;

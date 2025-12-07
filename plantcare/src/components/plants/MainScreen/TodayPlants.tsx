@@ -1,5 +1,6 @@
 import { Box, Typography, List, ListItem, ListItemText } from "@mui/material";
-import type { Plant } from "../App";
+import type { Plant } from "../../../types/plant";
+
 
 type TodayPlantsProps = {
   user: string;

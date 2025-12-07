@@ -1,6 +1,7 @@
 import { Card, Typography, Box, Button } from "@mui/material";
 import "./MainScreen.css";
-import type { Plant } from "../App";
+import type { Plant } from "../../../types/plant";
+
 
 type PlantCardProps = {
   plant: Plant;

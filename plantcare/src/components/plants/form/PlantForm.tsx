@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import "./PlantForm.css";
 import PlantFormFields from "./PlantFormFields";
-import type { Plant } from "../App";
+import type { Plant } from "../../../types/plant";
 
 type PlantFormProps = {
   user: string;
@@ -60,6 +60,8 @@ export default function PlantForm({ user, setPlants, onBack }: PlantFormProps) {
       ...plant,
       owner: user,
       nextWatering: nextDate.toISOString(),
+      createdAt: new Date().toISOString(), 
+      waterCount: 0,
     };
     setPlants((prev) => [...prev, newPlant]);
     onBack();
