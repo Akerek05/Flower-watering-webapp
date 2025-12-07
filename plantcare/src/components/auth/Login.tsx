@@ -23,8 +23,11 @@ type StoredUser = {
 type UsersMap = Record<string, StoredUser>;
 
 /**
- * Bejelentkezés / regisztrációs képernyő
- * Adatok LocalStorage-ben: users = { username: { password, plants: [] } }
+ * Bejelentkezés / regisztrációs képernyő.
+ *
+ * - A felhasználókat localStorage-ben tárolja `users` kulcs alatt:
+ *   `{ username: { password, plants: [] } }`.
+ * - Sikeres login vagy regisztráció után meghívja az `onLogin` callbacket.
  */
 export default function Login({ onLogin }: LoginProps) {
   const [tab, setTab] = useState<"login" | "register">("login");

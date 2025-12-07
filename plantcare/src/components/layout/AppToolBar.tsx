@@ -10,7 +10,13 @@ type AppToolbarProps = {
   onShowStats: () => void;
   onShowCalendar: () => void;
 };
-
+/**
+ * Felső eszköztár az alkalmazásban.
+ *
+ * - Kijelentkezés gomb.
+ * - Navigáció a statisztika és naptár nézetekre.
+ * - A jelenlegi nézetnek megfelelően kiemeli az aktív gombot.
+ */
 export default function AppToolbar({
   user,
   currentView,

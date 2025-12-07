@@ -18,8 +18,17 @@ export type FormPlant = {
   image?: string;
   note: string;
 };
-
+/**
+ * Új növény hozzáadására szolgáló képernyő.
+ *
+ * - Lokális state-ben kezeli az űrlap mezőket.
+ * - Validálja a kötelező mezőket (név, típus, gyakoriság).
+ * - Létrehozza az új `Plant` objektumot:
+ *   - `owner`, `nextWatering`, `createdAt`, `waterCount` mezőkkel.
+ * - Hozzáadja a listához, majd visszalép a fő képernyőre.
+ */
 export default function PlantForm({ user, setPlants, onBack }: PlantFormProps) {
+  /** Az űrlap aktuális állapota (új növény adatai). */
   const [plant, setPlant] = useState<FormPlant>({
     name: "",
     type: "",
@@ -27,13 +36,17 @@ export default function PlantForm({ user, setPlants, onBack }: PlantFormProps) {
     image: undefined,
     note: "",
   });
-
+  /**
+   * Szöveges mezők (név, típus, gyakoriság, megjegyzés) változását kezeli.
+   */
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setPlant({ ...plant, [e.target.name]: e.target.value });
   };
-
+  /**
+   * Kép feltöltését kezeli, base64-es előnézetet ment a state-be.
+   */
   const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -42,7 +55,12 @@ export default function PlantForm({ user, setPlants, onBack }: PlantFormProps) {
       setPlant((p) => ({ ...p, image: ev.target?.result as string }));
     reader.readAsDataURL(file);
   };
-
+  /**
+   * Űrlap elküldése:
+   * - validálás,
+   * - `nextWatering` kiszámítása,
+   * - új növény hozzáadása a listához.
+   */
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

@@ -19,7 +19,12 @@ type PlantDetailsDialogProps = {
   onSave: () => void;
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 };
-
+/**
+ * Dialógus egy kiválasztott növény adatainak megtekintéséhez és szerkesztéséhez.
+ *
+ * - Név, típus, locsolási gyakoriság, megjegyzés módosítása.
+ * - Előnézetben megjeleníti a jelenlegi képet (ha van).
+ */
 export default function PlantDetailsDialog({
   open,
   plant,

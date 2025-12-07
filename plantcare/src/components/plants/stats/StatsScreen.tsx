@@ -21,8 +21,14 @@ type StatItem = {
   name: string;
   waterCount: number;
 };
-
+/**
+ * Statisztikai képernyő a locsolások számáról növényenként.
+ *
+ * - Oszlopdiagramot jelenít meg Recharts segítségével.
+ * - Minden oszlop egy növény, az érték a `waterCount`.
+ */
 export default function StatsScreen({ user, plants, onBack }: StatsScreenProps) {
+   /** Az aktuális user növényeiből készített statisztikai sorok. */
   const data: StatItem[] = plants
     .filter((p) => p.owner === user)
     .map((p) => ({

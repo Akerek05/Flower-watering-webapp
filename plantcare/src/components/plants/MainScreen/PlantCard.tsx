@@ -10,7 +10,12 @@ type PlantCardProps = {
   onDelete: (index: number) => void;
   onDetails: (index: number) => void;
 };
-
+/**
+ * Egyetlen növény kártyáját megjelenítő komponens.
+ *
+ * - Mutatja a nevét, típusát, következő locsolás dátumát és képet (ha van).
+ * - Gombok: locsolás, törlés, részletek.
+ */
 export default function PlantCard({
   plant,
   index,
@@ -22,6 +27,7 @@ export default function PlantCard({
   const today = new Date();
   nextWaterDate.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
+  /** Következő locsolásig hátralévő napok száma, a háttérszínhez. */
   const diffDays = Math.floor(
     (nextWaterDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
   );

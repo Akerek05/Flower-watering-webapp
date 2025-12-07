@@ -8,7 +8,13 @@ type FilterBarProps = {
   onFilterTypeChange: (value: string) => void;
   types: string[];
 };
-
+/**
+ * Kereső- és szűrősáv a növénylistához.
+ *
+ * - Szöveges keresés név vagy típus alapján.
+ * - Típus szerinti legördülő szűrő.
+ * - Az állapotot a szülő (`MainScreen`) kezeli, ez csak inputokat rajzol.
+ */
 export default function FilterBar({
   search,
   onSearchChange,

@@ -7,7 +7,12 @@ type WateringCalendarScreenProps = {
   plants: Plant[];
   onBack: () => void;
 };
-
+/**
+ * Képernyő a locsolási naptár megjelenítéséhez.
+ *
+ * - Címet és vissza gombot tartalmaz.
+ * - A tényleges naptár nézetet a `WateringCalendar` komponens rendereli.
+ */
 export default function WateringCalendarScreen({
   user,
   plants,

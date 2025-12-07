@@ -9,7 +9,12 @@ type PlantFormFieldsProps = {
   onBack: () => void;
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
 };
-
+/**
+ * Prezentációs komponens az új növény űrlap mezőihez.
+ *
+ * - Csak megjeleníti az inputokat és továbbadja az eseményeket.
+ * - A valódi logika a `PlantForm` komponensben van.
+ */
 export default function PlantFormFields({
   plant,
   onChange,

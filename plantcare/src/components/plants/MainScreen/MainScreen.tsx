@@ -16,7 +16,14 @@ type MainScreenProps = {
   onShowStats: () => void;
   onShowCalendar: () => void;
 };
-
+/**
+ * Fő növénylista képernyő.
+ *
+ * - Megjeleníti az aktuális felhasználó növényeit.
+ * - Keresés és típus szerinti szűrés.
+ * - Locsolás, törlés, részletek szerkesztése.
+ * - Alul új növény hozzáadása, statisztika és naptár elérése.
+ */
 export default function MainScreen({
   user,
   plants,
@@ -25,17 +32,28 @@ export default function MainScreen({
   onShowStats,
   onShowCalendar,
 }: MainScreenProps) {
+   /** Keresőmező szövege (név vagy típus szerint). */
   const [search, setSearch] = useState("");
+   /** Kiválasztott típus szerinti szűrés. */
   const [filterType, setFilterType] = useState("");
+  /** Szerkesztett növény indexe a listában (null, ha nincs kiválasztva). */
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  /** Szerkesztés alatt lévő növény adatai. */
   const [editPlant, setEditPlant] = useState<Plant | null>(null);
-
+ /**
+   * Törli a megadott indexű növényt megerősítés után.
+   */
   const handleDelete = (index: number) => {
     if (!window.confirm("Biztosan törlöd ezt a növényt?")) return;
     const updated = plants.filter((_, i) => i !== index);
     setPlants(updated);
   };
-
+  /**
+   * Megjelöli a növényt locsoltnak:
+   * - frissíti a következő locsolás dátumát,
+   * - növeli a `waterCount` értékét,
+   * - elmenti a változásokat a localStorage-be.
+   */
   const handleWater = (index: number) => {
     setPlants((prev) => {
       const updated = [...prev];
@@ -54,19 +72,26 @@ export default function MainScreen({
       return updated;
     });
   };
-
+   /**
+   * Beállítja szerkesztésre a kiválasztott növényt.
+   */
   const handleDetails = (index: number) => {
     setSelectedIndex(index);
     setEditPlant({ ...plants[index] });
   };
-
+  /**
+   * A részletek dialógusban lévő input mezők változását kezeli.
+   */
   const handleDetailsChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setEditPlant((prev) => (prev ? { ...prev, [name]: value } : prev));
   };
-
+  /**
+   * Elmenti a szerkesztett növény adatait, frissíti a listát
+   * és a localStorage-ben tárolt felhasználói adatokat.
+   */
   const handleDetailsSave = () => {
     if (selectedIndex == null || !editPlant) return;
     setPlants((prev) => {
@@ -84,7 +109,9 @@ export default function MainScreen({
     setSelectedIndex(null);
     setEditPlant(null);
   };
-
+   /**
+   * Bezárja a részletek dialógust mentés nélkül.
+   */
   const handleDetailsClose = () => {
     setSelectedIndex(null);
     setEditPlant(null);

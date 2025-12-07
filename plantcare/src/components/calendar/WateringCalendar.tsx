@@ -8,10 +8,17 @@ type WateringCalendarProps = {
 };
 
 type PlantsByDate = Record<string, Plant[]>;
-
+/**
+ * Locsolási naptár nézet.
+ *
+ * - A felhasználó növényeit a `nextWatering` dátum szerint csoportosítja.
+ * - Minden naphoz kártyán jeleníti meg az adott napra ütemezett növényeket.
+ */
 export default function WateringCalendar({ user, plants }: WateringCalendarProps) {
+  /** Csak az aktuális felhasználó növényei. */
   const userPlants = plants.filter((p) => p.owner === user);
 
+  /** Dátum szerinti csoportosítás: { "2025.01.01.": [Plant, ...], ... } */
   const map: PlantsByDate = {};
   userPlants.forEach((p) => {
     const date = new Date(p.nextWatering).toLocaleDateString("hu-HU");
@@ -19,6 +26,7 @@ export default function WateringCalendar({ user, plants }: WateringCalendarProps
     map[date].push(p);
   });
 
+  /** A csoportosított adatok rendezett listája (dátum szerint). */
   const entries = Object.entries(map).sort(
     ([d1], [d2]) => new Date(d1).getTime() - new Date(d2).getTime()
   );

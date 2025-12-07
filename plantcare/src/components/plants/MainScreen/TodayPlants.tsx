@@ -6,11 +6,17 @@ type TodayPlantsProps = {
   user: string;
   plants: Plant[];
 };
-
+/**
+ * Az aktuális napon (vagy korábban) esedékes locsolású növények listája.
+ *
+ * - Ha nincs ilyen növény, egy rövid üzenetet jelenít meg.
+ * - Egyébként listázza a nevüket, típusukat és a következő locsolás dátumát.
+ */
 export default function TodayPlants({ user, plants }: TodayPlantsProps) {
+  /** A mai nap dátuma, idő nélkül, összehasonlításhoz normalizálva. */
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
+  /** Az aktuális userhez tartozó, ma vagy korábban esedékes növények. */
   const duePlants = plants
     .filter((p) => p.owner === user)
     .filter((p) => {
