@@ -1,15 +1,18 @@
 import { useState } from "react";
 import {
-  Box, Typography, Button, Card, Grid, TextField, MenuItem
+  Box, Typography, Button, Grid, TextField, MenuItem
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-import './MainScreen.css';
+import "./MainScreen.css";
+import PlantCard from "./PlantCard";
+import PlantDetailsDialog from "./PlantDetailsDialog";
+import TodayPlants from "./TodayPlants";
 
 export default function MainScreen({ user, plants, setPlants, onAddPlant, onShowStats }) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [editPlant, setEditPlant] = useState(null);
 
   const handleDelete = (index) => {
     if (!window.confirm("Biztosan törlöd ezt a növényt?")) return;
@@ -32,7 +35,36 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
     });
   };
 
-  // 🔍 Szűrés logika
+  const handleDetails = (index) => {
+    setSelectedIndex(index);
+    setEditPlant({ ...plants[index] });
+  };
+
+  const handleDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setEditPlant((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDetailsSave = () => {
+    if (selectedIndex == null) return;
+    setPlants((prev) => {
+      const updated = [...prev];
+      updated[selectedIndex] = { ...editPlant };
+
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      users[user].plants = updated;
+      localStorage.setItem("users", JSON.stringify(users));
+      return updated;
+    });
+    setSelectedIndex(null);
+    setEditPlant(null);
+  };
+
+  const handleDetailsClose = () => {
+    setSelectedIndex(null);
+    setEditPlant(null);
+  };
+
   const filteredPlants = plants
     .filter((p) => p.owner === user)
     .filter((p) =>
@@ -49,7 +81,7 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
         🌿 {user} növényei
       </Typography>
 
-      {/* 🔍 Kereső és szűrő */}
+      {/* kereső + szűrő */}
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
         <TextField
           label="Keresés név vagy típus szerint"
@@ -74,62 +106,55 @@ export default function MainScreen({ user, plants, setPlants, onAddPlant, onShow
         </TextField>
       </Box>
 
+      {/* növénykártyák */}
       {filteredPlants.length === 0 ? (
         <Typography color="text.secondary" sx={{ mt: 2 }}>
           Nincs találat.
         </Typography>
       ) : (
         <Grid container spacing={2}>
-          {filteredPlants.map((plant, index) => {
-            const nextWaterDate = new Date(plant.nextWatering);
-            const today = new Date();
-            nextWaterDate.setHours(0, 0, 0, 0);
-            today.setHours(0, 0, 0, 0);
-            const diffDays = Math.floor((nextWaterDate - today) / (1000 * 60 * 60 * 24));
-
-            let bgColor = "#e8f5e9";
-            if (diffDays < 0) bgColor = "#ffebee";
-            else if (diffDays === 0) bgColor = "#fff8e1";
-
-            return (
-              <Grid item xs={12} md={6} lg={4} key={index}>
-                <Card sx={{ p: 2, backgroundColor: bgColor }}>
-                  <Typography variant="h6">{plant.name}</Typography>
-                  <Typography variant="body2">Típus: {plant.type}</Typography>
-                  <Typography variant="body2">
-                    Következő locsolás:{" "}
-                    {new Date(plant.nextWatering).toLocaleDateString("hu-HU")}
-                  </Typography>
-
-                  {plant.image && (
-                    <div className="plant-image-wrapper">
-                      <img src={plant.image} alt={plant.name} />
-                    </div>
-                  )}
-
-                  <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
-                    <Button variant="contained" color="success" onClick={() => handleWater(index)}>
-                      💧 Meglocsolva
-                    </Button>
-                    <Button variant="outlined" color="error" onClick={() => handleDelete(index)}>
-                      Törlés
-                    </Button>
-                  </Box>
-                </Card>
-              </Grid>
-            );
-          })}
+          {filteredPlants.map((plant, index) => (
+            <PlantCard
+              key={index}
+              plant={plant}
+              index={index}
+              onWater={handleWater}
+              onDelete={handleDelete}
+              onDetails={handleDetails}
+            />
+          ))}
         </Grid>
       )}
 
+      {/* ma esedékes */}
+      <Typography variant="h6" sx={{ mt: 4 }}>
+        ✅ Ma esedékes locsolások
+      </Typography>
+      <TodayPlants user={user} plants={plants} />
+
+      {/* gombok alul */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-        <Button variant="contained" color="success" startIcon={<AddCircleIcon />} onClick={onAddPlant}>
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<AddCircleIcon />}
+          onClick={onAddPlant}
+        >
           Új növény
         </Button>
         <Button variant="outlined" onClick={onShowStats}>
           📊 Statisztika
         </Button>
       </Box>
+
+      {/* részletek + szerkesztés dialógus */}
+      <PlantDetailsDialog
+        open={Boolean(editPlant)}
+        plant={editPlant}
+        onClose={handleDetailsClose}
+        onSave={handleDetailsSave}
+        onChange={handleDetailsChange}
+      />
     </Box>
   );
 }

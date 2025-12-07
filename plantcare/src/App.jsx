@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Button } from "@mui/material";
+import { Container, Typography, Button, Box } from "@mui/material";
 import Login from "./components/Login";
 import MainScreen from "./components/MainScreen";
 import PlantForm from "./components/PlantForm";
-import StatsScreen from "./components/StatsScreen"; // 👈 új képernyő import
+import StatsScreen from "./components/StatsScreen";
+import WateringCalendarScreen from "./components/WateringCalendarScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [view, setView] = useState("main"); // "main" | "form" | "stats"
+  const [view, setView] = useState("main"); // "main" | "form" | "stats" | "calendar"
   const [plants, setPlants] = useState([]);
 
   // 🌿 Bejelentkezett user betöltése + növényei
@@ -43,25 +44,31 @@ export default function App() {
         Üdvözöllek, {user}! 🌿
       </Typography>
 
-      <Button
-        variant="outlined"
-        color="error"
-        onClick={handleLogout}
-        sx={{ mb: 3, mr: 2 }}
-      >
-        Kijelentkezés
-      </Button>
+      <Box sx={{ mb: 3, display: "flex", gap: 2 }}>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleLogout}
+        >
+          Kijelentkezés
+        </Button>
 
-      {view !== "login" && (
         <Button
           variant="outlined"
           color="primary"
           onClick={() => setView("stats")}
-          sx={{ mb: 3 }}
         >
           📊 Statisztikák
         </Button>
-      )}
+
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => setView("calendar")}
+        >
+          📅 Locsolási naptár
+        </Button>
+      </Box>
 
       {view === "main" && (
         <MainScreen
@@ -70,6 +77,7 @@ export default function App() {
           setPlants={setPlants}
           onAddPlant={() => setView("form")}
           onShowStats={() => setView("stats")}
+          onShowCalendar={() => setView("calendar")}
         />
       )}
 
@@ -83,6 +91,14 @@ export default function App() {
 
       {view === "stats" && (
         <StatsScreen
+          user={user}
+          plants={plants}
+          onBack={() => setView("main")}
+        />
+      )}
+
+      {view === "calendar" && (
+        <WateringCalendarScreen
           user={user}
           plants={plants}
           onBack={() => setView("main")}

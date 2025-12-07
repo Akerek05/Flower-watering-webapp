@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Box, TextField, Button, Paper, Typography } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import './PlantForm.css';
+import { Box, Paper, Typography } from "@mui/material";
+import "./PlantForm.css";
+import PlantFormFields from "./PlantFormFields";
 
 export default function PlantForm({ user, setPlants, onBack }) {
   const [plant, setPlant] = useState({
@@ -9,6 +9,7 @@ export default function PlantForm({ user, setPlants, onBack }) {
     type: "",
     frequency: "",
     image: "",
+    note: "",        // 👈 új mező
   });
 
   const handleChange = (e) => {
@@ -37,11 +38,11 @@ export default function PlantForm({ user, setPlants, onBack }) {
     nextDate.setDate(now.getDate() + (isNaN(freq) ? 3 : freq));
 
     const newPlant = {
-        ...plant,
-        owner: user, // <-- hozzárendeljük a tulajdonost
-        nextWatering: nextDate.toISOString(),
+      ...plant,
+      owner: user,
+      nextWatering: nextDate.toISOString(),
     };
-    setPlants((prev) => [...prev, newPlant]); // <-- frissíti a listát App-ban
+    setPlants((prev) => [...prev, newPlant]);
     onBack();
   };
 
@@ -52,34 +53,13 @@ export default function PlantForm({ user, setPlants, onBack }) {
           🌱 Új növény hozzáadása
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField name="name" label="Név" value={plant.name} onChange={handleChange} />
-          <TextField name="type" label="Típus" value={plant.type} onChange={handleChange} />
-          <TextField name="frequency" label="Locsolási gyakoriság (nap)" value={plant.frequency} onChange={handleChange} />
-          <Button variant="outlined" component="label">
-            Kép feltöltése
-            <input type="file" hidden accept="image/*" onChange={handleImage} />
-          </Button>
-
-          {/* Előnézet: ugyanaz a fixált magasság és objekt-fit, mint a fő nézetben */}
-          {plant.image && (
-            <Box sx={{ mt: 1 }}>
-              <Typography variant="subtitle2">Előnézet</Typography>
-              <div className="preview-wrapper">
-                <img src={plant.image} alt="preview" />
-              </div>
-            </Box>
-          )}
-
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={onBack}>
-              Vissza
-            </Button>
-            <Button variant="contained" color="success" type="submit">
-              Mentés
-            </Button>
-          </Box>
-        </Box>
+        <PlantFormFields
+          plant={plant}
+          onChange={handleChange}
+          onImageChange={handleImage}
+          onBack={onBack}
+          onSubmit={handleSubmit}
+        />
       </Paper>
     </Box>
   );
