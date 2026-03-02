@@ -7,3 +7,6 @@ Egy statisztikai nézet diagramon mutatja, hogy a növények milyen gyakran igé
 
 
 Az alkalmazás Material Design alapú, reszponzív felületet kap, ikonokkal és színkódokkal jelölve az aktuálisan locsolandó növényeket. A locsolási értesítésekhez Notification API is használható (ha a böngésző engedélyezi).
+
+
+Az elindítást vs codeban ajánlott és a plantcare mappában az 'npm install' majd 'npm run dev parancsok után bögészöben megnyitható'
